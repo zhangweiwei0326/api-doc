@@ -1,0 +1,29 @@
+{
+    "name": "weiwei/api-doc",
+    "description": "The ThinkPHP5 Api Doc Package",
+    "version": "1.0.0",
+    "authors": [
+        {
+            "name": "weiwei",
+            "email": "1763692101@qq.com"
+        }
+    ],
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Api\\Doc\\": "src"
+        },
+        "files": [
+            "src/helper.php"
+        ]
+    },
+    "require": {
+        "php": ">=5.4"
+    },
+    "extra": {
+        "config": {
+            "doc": "src/config.php"
+        }
+    },
+    "minimum-stability" : "dev"
+}
