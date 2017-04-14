@@ -1,6 +1,7 @@
 {
     "name": "weiwei/api-doc",
     "description": "The ThinkPHP5 Api Doc Package",
+    "type": "think-extend",
     "authors": [
         {
             "name": "weiwei",
@@ -17,12 +18,12 @@
         ]
     },
     "require": {
-        "php": ">=5.4"
+        "topthink/think-helper": ">=1.0.4",
+        "topthink/think-installer": ">=1.0.10"
     },
     "extra": {
         "think-config": {
             "doc": "src/config.php"
         }
-    },
-    "minimum-stability" : "dev"
+    }
 }
