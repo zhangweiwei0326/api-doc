@@ -20,7 +20,7 @@
         "php": ">=5.4"
     },
     "extra": {
-        "config": {
+        "think-config": {
             "doc": "src/config.php"
         }
     },
