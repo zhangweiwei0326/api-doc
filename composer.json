@@ -1,7 +1,6 @@
 {
     "name": "weiwei/api-doc",
     "description": "The ThinkPHP5 Api Doc Package",
-    "version": "1.0.0",
     "authors": [
         {
             "name": "weiwei",
