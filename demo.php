@@ -9,6 +9,7 @@ class demo
      * @title 测试demo接口
      * @description 接口说明
      * @author 开发者
+     * @url /api/demo
      *
      * @param name:id type:int require:1 default:1 other: desc:唯一ID
      *

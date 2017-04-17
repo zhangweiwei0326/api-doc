@@ -86,9 +86,13 @@ class Doc
                     if(!in_array($action->name, $filter_method))
                     {
                         $doc = new DocParser();
-                        $action_doc = $doc->parse($action->getDocComment());
-                        $action_doc['name'] = $class."::".$action->name;
-                        array_push($moudel['actions'], $action_doc);
+                        $doc_str = $action->getDocComment();
+                        if($doc_str)
+                        {
+                            $action_doc = $doc->parse($doc_str);
+                            $action_doc['name'] = $class."::".$action->name;
+                            array_push($moudel['actions'], $action_doc);
+                        }
                     }
                 }
                 array_push($list, $moudel);
