@@ -80,7 +80,7 @@ class DocParser
         }else if (empty ( $this->params [$param] )) {
             $this->params [$param] = $value;
         } else {
-            $this->params [$param] = $value . $this->params [$param];
+            $this->params [$param] = $this->params [$param] . $value;
         }
         return true;
     }
