@@ -140,6 +140,7 @@ class DocController
         if($action_doc)
         {
             $return = $this->doc->formatReturn($action_doc);
+            $action_doc['param'] = isset($action_doc['param']) ? $action_doc['param'] : [];
             return $this->show('info', ['doc'=>$action_doc, 'return'=>$return]);
         }
     }
