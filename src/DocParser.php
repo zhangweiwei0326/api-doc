@@ -26,6 +26,7 @@ class DocParser
     }
     
     private function parseLines($lines) {
+        $desc = [];
         foreach ( $lines as $line ) {
             $parsedLine = $this->parseLine ( $line ); // Parse the line
 
@@ -69,21 +70,17 @@ class DocParser
     }
     
     private function setParam($param, $value) {
-        if ($param == 'param' || $param == 'return')
-            $value = $this->formatParamOrReturn ( $value );
+        if ($param == 'param')
+            $value = $this->formatParam( $value );
         if ($param == 'class')
             list ( $param, $value ) = $this->formatClass ( $value );
 
-        if (empty ( $this->params [$param] )) {
+        if($param == 'return' || $param == 'param'){
+            $this->params [$param][] = $value;
+        }else if (empty ( $this->params [$param] )) {
             $this->params [$param] = $value;
-        } else if ($param == 'param') {
-            $arr = array (
-                $this->params [$param],
-                $value
-            );
-            $this->params [$param] = $arr;
         } else {
-            $this->params [$param] = $value + $this->params [$param];
+            $this->params [$param] = $value . $this->params [$param];
         }
         return true;
     }
@@ -107,10 +104,31 @@ class DocParser
         );
     }
     
-    private function formatParamOrReturn($string) {
-        $pos = strpos ( $string, ' ' );
+    private function formatParam($string) {
+        $string = $string." ";
+        if(preg_match_all('/(\w+):(.*?)[\s\n]/s', $string, $meatchs)){
+            $param = [];
+            foreach ($meatchs[1] as $key=>$value){
+                $param[$meatchs[1][$key]] = $this->getParamType($meatchs[2][$key]);
+            }
+            return $param;
+        }else{
+            return ''.$string;
+        }
+    }
 
-        $type = substr ( $string, 0, $pos );
-        return '(' . $type . ')' . substr ( $string, $pos + 1 );
+    private function getParamType($type){
+        $typeMaps = [
+            'string' => '字符串',
+            'int' => '整型',
+            'float' => '浮点型',
+            'boolean' => '布尔型',
+            'date' => '日期',
+            'array' => '数组',
+            'fixed' => '固定值',
+            'enum' => '枚举类型',
+            'object' => '对象',
+        ];
+        return array_key_exists($type,$typeMaps) ? $typeMaps[$type] : $type;
     }
 }

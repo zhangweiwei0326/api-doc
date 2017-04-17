@@ -4,7 +4,14 @@ namespace Api\Doc;
 class Doc
 {
     protected  $config = [
+        'title'=>'APi接口文档',
+        'version'=>'1.0.0',
+        'copyright'=>'Powered By Zhangweiwei',
         'controller' => [],
+        'return_format' => [
+            'status' => "200/300",
+            'message' => "提示信息",
+        ]
     ];
 
     /**
@@ -15,8 +22,6 @@ class Doc
     public function __construct($config = [])
     {
         $this->config = array_merge($this->config, $config);
-        //获取模块列表
-        $this->get_list();
     }
 
     /**
@@ -55,26 +60,135 @@ class Doc
         return isset($this->config[$name]);
     }
 
-    public function get_list()
+    /**
+     * 获取接口列表
+     * @return array
+     */
+    public function getList()
     {
-        //app\\api\\controller\\Upload
         $controller = $this->config['controller'];
+        $list = [];
         foreach ($controller as $class)
         {
-            $reflection = new \ReflectionClass($controller);
-            $doc_str = $reflection->getDocComment();
-            $doc = new DocParser();
-            $doc = $doc->parse($doc_str);
+            if(class_exists($class))
+            {
+                $moudel= [];
+                $reflection = new \ReflectionClass($class);
+                $doc_str = $reflection->getDocComment();
+                $doc = new DocParser();
+                $class_doc = $doc->parse($doc_str);
+                $moudel =  $class_doc;
+                $moudel['class'] = $class;
+                $method = $reflection->getMethods(\ReflectionMethod::IS_PUBLIC);
+                $filter_method = ['__construct'];
+                $moudel['actions'] = [];
+                foreach ($method as $action){
+                    if(!in_array($action->name, $filter_method))
+                    {
+                        $doc = new DocParser();
+                        $action_doc = $doc->parse($action->getDocComment());
+                        $action_doc['name'] = $class."::".$action->name;
+                        array_push($moudel['actions'], $action_doc);
+                    }
+                }
+                array_push($list, $moudel);
+            }
+        }
+        return $list;
+    }
+
+    /**
+     * 获取类中指导方法注释详情
+     * @param $class
+     * @param $action
+     * @return array
+     */
+    public function getInfo($class, $action)
+    {
+        $action_doc = [];
+        if($class && class_exists($class)){
+            $reflection = new \ReflectionClass($class);
+            if($reflection->hasMethod($action)) {
+                $method = $reflection->getMethod($action);
+                $doc = new DocParser();
+                $action_doc = $doc->parse($method->getDocComment());
+            }
+        }
+        return $action_doc;
+    }
+
+    /**
+     * 格式化数组为json字符串-用于格式显示
+     * @param array $doc
+     * @return string
+     */
+    public function formatReturn($doc = [])
+    {
+        $json = '{<br>';
+        $data = $this->config['return_format'];
+        foreach ($data as $name=>$value) {
+            $json .= '&nbsp;&nbsp;"'.$name.'":'.$value.',<br>';
+        }
+        $json .= '&nbsp;&nbsp;"data":{<br/>';
+        $returns = isset($doc['return']) ? $doc['return'] : [];
+        foreach ($returns as $val)
+        {
+            list($name, $value) =  explode(":", trim($val));
+            if(strpos($value, '@') != false){
+                $json .= $this->string2jsonArray($doc, $val, '&nbsp;&nbsp;&nbsp;&nbsp;');
+            }else{
+                $json .= '&nbsp;&nbsp;&nbsp;&nbsp;' . $this->string2json(trim($name), $value);
+            }
+        }
+        $json .= '&nbsp;&nbsp;}<br/>';
+        $json .= '}';
+        return $json;
+    }
+
+    /**
+     * 格式化json字符串-用于展示
+     * @param $name
+     * @param $val
+     * @return string
+     */
+    private function string2json($name, $val){
+        if(strpos($val,'#') != false){
+            return '"'.$name.'": ["'.str_replace('#','',$val).'"],<br/>';
+        }else {
+            return '"'.$name.'":"'.$val.'",<br/>';
         }
     }
-    
+
     /**
-     * 
-     * @return \think\Response
+     * 递归转换数组为json字符格式-用于展示
+     * @param $doc
+     * @param $val
+     * @param $space
+     * @return string
      */
-    public function show()
-    {
-        $content = "123";
-        return response($content, 200);
+    private function string2jsonArray($doc, $val, $space){
+        list($name, $value) =  explode(":", trim($val));
+        $json = "";
+        if(strpos($value, "@!") != false){
+            $json .= $space.'"'.$name.'":{//'.str_replace('@!','',$value).'<br/>';
+        }else{
+            $json .= $space.'"'.$name.'":[{//'.str_replace('@','',$value).'<br/>';
+        }
+        $return = isset($doc[$name]) ? $doc[$name] : [];
+        if(preg_match_all('/(\w+):(.*?)[\s\n]/s', $return." ", $meatchs)){
+            foreach ($meatchs[0] as $key=>$v){
+                if(strpos($meatchs[1][$key],'@') != false){
+                    $json .= $this->string2jsonArray($doc,$v,$space.'&nbsp;&nbsp;');
+                } else{
+                    $json .= $space.'&nbsp;&nbsp;'. $this->string2json(trim($meatchs[1][$key]), $meatchs[2][$key]);
+                }
+            }
+        }
+        if(strpos($value, "@!") != false){
+            $json .= $space."}<br/>";
+        }else{
+            $json .= $space."}]<br/>";
+        }
+        return $json;
     }
 }
