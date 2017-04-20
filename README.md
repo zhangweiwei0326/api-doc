@@ -52,6 +52,7 @@ class demo
 }
 ```
 ####4、在浏览器访问http://你的域名/doc 查看接口文档
+
 ####5、预览
 ![](https://static.oschina.net/uploads/img/201704/17101409_tAgD.png)
 ![](https://static.oschina.net/uploads/img/201704/17101348_XuUz.png)
@@ -59,3 +60,7 @@ class demo
 
 ###更多支持
 - QQ1763692101
+
+###问题
+不少小伙伴反应，没有正常安装doc.php 配置文件，原因是你改过应用目录官方默认是application
+如果没有生成doc.php 配置文件 你可以手动安装，直接在application（你修改的目录）里面创建extra文件夹，然后把扩展包中的vendor\weiwei\api-doc\src\config.php文件复制进去，并重命名为doc.php
