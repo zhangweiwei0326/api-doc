@@ -81,7 +81,7 @@ class Doc
                 $moudel =  $class_doc;
                 $moudel['class'] = $class;
                 $method = $reflection->getMethods(\ReflectionMethod::IS_PUBLIC);
-                $filter_method = array_column(['__construct'], $this->config['filter_method']);
+                $filter_method = array_merge(['__construct'], $this->config['filter_method']);
                 $moudel['actions'] = [];
                 foreach ($method as $action){
                     if(!in_array($action->name, $filter_method))
