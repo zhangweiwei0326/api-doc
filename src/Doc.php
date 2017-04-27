@@ -8,8 +8,9 @@ class Doc
         'version'=>'1.0.0',
         'copyright'=>'Powered By Zhangweiwei',
         'controller' => [],
+        'filter_method'=>['_empty'],
         'return_format' => [
-            'status' => "200/300",
+            'status' => "200/300/301/302",
             'message' => "提示信息",
         ]
     ];
@@ -80,7 +81,7 @@ class Doc
                 $moudel =  $class_doc;
                 $moudel['class'] = $class;
                 $method = $reflection->getMethods(\ReflectionMethod::IS_PUBLIC);
-                $filter_method = ['__construct'];
+                $filter_method = array_column(['__construct'], $this->config['filter_method']);
                 $moudel['actions'] = [];
                 foreach ($method as $action){
                     if(!in_array($action->name, $filter_method))
@@ -181,7 +182,7 @@ class Doc
         $return = isset($doc[$name]) ? $doc[$name] : [];
         if(preg_match_all('/(\w+):(.*?)[\s\n]/s', $return." ", $meatchs)){
             foreach ($meatchs[0] as $key=>$v){
-                if(strpos($meatchs[1][$key],'@') != false){
+                if(strpos($meatchs[2][$key],'@') != false){
                     $json .= $this->string2jsonArray($doc,$v,$space.'&nbsp;&nbsp;');
                 } else{
                     $json .= $space.'&nbsp;&nbsp;'. $this->string2json(trim($meatchs[1][$key]), $meatchs[2][$key]);
