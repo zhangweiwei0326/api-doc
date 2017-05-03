@@ -219,7 +219,7 @@
             var $btn = $(this).button('loading');
             $.ajax({
                 type: "POST",
-                url: "/doc/debug",
+                url: "{$root}/doc/debug",
                 data: $("#apiform").serialize(),
                 dataType:'json',
                 success: function (data) {

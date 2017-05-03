@@ -91,13 +91,13 @@
         }
         var content_text = $("#" + tab_content).find("#zt_text");
         $(content_text).html("<p>加载中……</p>");
-        $(content_text).attr("src","/doc/info?name="+name);
+        $(content_text).attr("src","{$root}/doc/info?name="+name);
         initHeight();
     }
     var zTree;
     $(document).ready(function(){
         $.ajax({
-            url: "/doc/list",
+            url: "{$root}/doc/list",
             dataType: "json",
             success: function(data){
                 var zNodes = data.list;

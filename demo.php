@@ -1,9 +1,12 @@
 <?php
+namespace app\index\controller;
+use think\Controller;
+
 /**
  * @title 测试demo
  * @description 接口说明
  */
-class demo
+class Demo extends Controller
 {
     /**
      * @title 测试demo接口
@@ -27,6 +30,7 @@ class demo
     public function index()
     {
         //接口代码
+        echo json_encode(["code"=>200, "message"=>"success", "data"=>[]]);
     }
 
 }

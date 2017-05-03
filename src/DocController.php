@@ -11,6 +11,7 @@ class DocController
 {
     protected $assets_path = "";
     protected $view_path = "";
+    protected $root = "";
     /**
      * @var \think\Request Request实例
      */
@@ -54,12 +55,13 @@ class DocController
         $config = [
             'view_path' => $this->view_path
         ];
-       $this->view =  new View($config);
-       $this->doc = new Doc((array)Config::get('doc'));
+        $this->view =  new View($config);
+        $this->doc = new Doc((array)Config::get('doc'));
 
-       $this->view->assign('title',$this->doc->__get("title")); 
-       $this->view->assign('version',$this->doc->__get("version")); 
-       $this->view->assign('copyright',$this->doc->__get("copyright")); 
+        $this->view->assign('title',$this->doc->__get("title"));
+        $this->view->assign('version',$this->doc->__get("version"));
+        $this->view->assign('copyright',$this->doc->__get("copyright"));
+        $this->root = $this->request->root();
     }
 
     /**
@@ -70,9 +72,10 @@ class DocController
     protected function show($name, $vars = [], $replace = [], $config = [])
     {
         $re = [
-            "__ASSETS__" => "/doc/assets"
+            "__ASSETS__" => $this->root."/doc/assets"
         ];
-        $replace = array_merge($replace, $re);
+        $replace = array_merge($re, $replace);
+        $vars = array_merge(['root'=>$this->root], $vars);
         return $this->view->fetch($name, $vars, $replace, $config);
     }
 
@@ -114,12 +117,12 @@ class DocController
     {
         $list = $this->doc->getList();
         foreach ($list as $key=>$moudel){
-            $list[$key]['iconClose'] = "/doc/assets/js/zTree_v3/img/zt-folder.png";
-            $list[$key]['iconOpen'] = "/doc/assets/js/zTree_v3/img/zt-folder-o.png";
+            $list[$key]['iconClose'] = $this->root."/doc/assets/js/zTree_v3/img/zt-folder.png";
+            $list[$key]['iconOpen'] = $this->root."/doc/assets/js/zTree_v3/img/zt-folder-o.png";
             $list[$key]['open'] = true;
             $list[$key]['isParent'] = true;
             foreach ($moudel['actions'] as $k=>$v) {
-                $moudel['actions'][$k]['icon'] = "/doc/assets/js/zTree_v3/img/zt-file.png";
+                $moudel['actions'][$k]['icon'] = $this->root."/doc/assets/js/zTree_v3/img/zt-file.png";
                 $moudel['actions'][$k]['isParent'] = false;
                 $moudel['actions'][$k]['isText'] = true;
             }
