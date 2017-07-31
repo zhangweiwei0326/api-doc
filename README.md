@@ -59,7 +59,7 @@ class demo
 ![](https://static.oschina.net/uploads/img/201704/17101306_KePe.png)
 
 ###更多支持
-- QQ1763692101
+- QQ群663447446
 
 ###问题
 不少小伙伴反应，没有正常安装doc.php 配置文件，原因是你改过应用目录官方默认是application
