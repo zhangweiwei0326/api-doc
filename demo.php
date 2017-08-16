@@ -5,6 +5,8 @@ use think\Controller;
 /**
  * @title 测试demo
  * @description 接口说明
+ * @header name:key require:1 default: desc:秘钥(区别设置)
+ * @param name:public type:int require:1 default:1 other: desc:公共参数(区别设置)
  */
 class Demo extends Controller
 {
@@ -12,7 +14,10 @@ class Demo extends Controller
      * @title 测试demo接口
      * @description 接口说明
      * @author 开发者
-     * @url /api/demo
+     * @url /index/demo
+     * @method GET
+     *
+     * @header name:device require:1 default: desc:设备号
      *
      * @param name:id type:int require:1 default:1 other: desc:唯一ID
      *
@@ -30,7 +35,8 @@ class Demo extends Controller
     public function index()
     {
         //接口代码
-        echo json_encode(["code"=>200, "message"=>"success", "data"=>[]]);
+        $device = $this->request->header('device');
+        echo json_encode(["code"=>200, "message"=>"success", "data"=>['device'=>$device]]);
     }
 
 }

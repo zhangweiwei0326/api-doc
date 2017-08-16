@@ -14,5 +14,13 @@ return [
         //数据格式
         'status' => "200/300/301/302",
         'message' => "提示信息",
-    ]
+    ],
+    'public_header' => [
+        //全局公共头部参数
+        //如：['name'=>'version', 'require'=>1, 'default'=>'', 'desc'=>'版本号(全局)']
+    ],
+    'public_param' => [
+        //全局公共请求参数，设置了所以的接口会自动增加次参数
+        //如：['name'=>'token', 'type'=>'string', 'require'=>1, 'default'=>'', 'other'=>'' ,'desc'=>'验证（全局）')']
+    ],
 ];

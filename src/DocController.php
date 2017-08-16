@@ -143,7 +143,8 @@ class DocController
         if($action_doc)
         {
             $return = $this->doc->formatReturn($action_doc);
-            $action_doc['param'] = isset($action_doc['param']) ? $action_doc['param'] : [];
+            $action_doc['header'] = isset($action_doc['header']) ? array_merge($this->doc->__get('public_header'), $action_doc['header']) : [];
+            $action_doc['param'] = isset($action_doc['param']) ? array_merge($this->doc->__get('public_param'), $action_doc['param']) : [];
             return $this->show('info', ['doc'=>$action_doc, 'return'=>$return]);
         }
     }
@@ -160,25 +161,18 @@ class DocController
         $res['status'] = '404';
         $res['meaasge'] = '接口地址无法访问！';
         $res['result'] = '';
-        $type =  $this->request->param('method_type','get');
-        $cookie = $this->request->param('cookie','GET');
+        $method =  $this->request->param('method_type', 'GET');
+        $cookie = $this->request->param('cookie');
+        $headers = $this->request->param('header/a', array());
         unset($data['method_type']);
         unset($data['url']);
         unset($data['cookie']);
-        if($type == 'get'){
-            $data = array_filter($data);
-            $api_url .= "?".http_build_query($data);
-            //还原数组格式
-            $api_url = str_replace(array('%5B0%5D'), array('[]'), $api_url);
-            $res['result'] = http_request($api_url, $cookie);
-        }else{
-            $res['result'] = http_request($api_url, $cookie, $data);
-        }
+        unset($data['header']);
+        $res['result'] = http_request($api_url, $cookie, $data, $method, $headers);
         if($res['result']){
             $res['status'] = '200';
             $res['meaasge'] = 'success';
         }
-        url();
         return response($res, 200, [], 'json');
     }
 }

@@ -5,17 +5,47 @@
 \think\Route::get('doc/info', "\\Api\\Doc\\DocController@getInfo");
 \think\Route::any('doc/debug', "\\Api\\Doc\\DocController@debug");
 
-function http_request($url, $cookie, $data = null, $headers = array()){
+/**
+ * curl模拟请求方法
+ * @param $url
+ * @param $cookie
+ * @param array $data
+ * @param $method
+ * @param array $headers
+ * @return mixed
+ */
+function http_request($url, $cookie, $data = array(), $method = array(), $headers = array()){
     $curl = curl_init();
+    if(count($data) && $method == "GET"){
+        $data = array_filter($data);
+        $url .= "?".http_build_query($data);
+        $url = str_replace(array('%5B0%5D'), array('[]'), $url);
+    }
     curl_setopt($curl, CURLOPT_URL, $url);
     curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
     curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, FALSE);
     if (count($headers)){
-        curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+        $head = array();
+        foreach ($headers as $name=>$value){
+            $head[] = $name.":".$value;
+        }
+        curl_setopt($curl, CURLOPT_HTTPHEADER, $head);
     }
-    if (!empty($data)){
-        curl_setopt($curl, CURLOPT_POST, 1);
-        curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+    $method = strtoupper($method);
+    switch($method) {
+        case 'GET':
+            break;
+        case 'POST':
+            curl_setopt($handle, CURLOPT_POST, true);
+            curl_setopt($handle, CURLOPT_POSTFIELDS, $data);
+            break;
+        case 'PUT':
+            curl_setopt($handle, CURLOPT_CUSTOMREQUEST, 'PUT');
+            curl_setopt($handle, CURLOPT_POSTFIELDS, $data);
+            break;
+        case 'DELETE':
+            curl_setopt($handle, CURLOPT_CUSTOMREQUEST, 'DELETE');
+            break;
     }
     if (!empty($cookie)){
         curl_setopt($curl, CURLOPT_COOKIE, $cookie);

@@ -19,17 +19,25 @@ composer require weiwei/api-doc dev-master
 方法如下：返回参数支持数组及多维数组
 ```
 <?php
+namespace app\index\controller;
+use think\Controller;
+
 /**
  * @title 测试demo
  * @description 接口说明
+ * @header name:key require:1 default: desc:秘钥(区别设置)
+ * @param name:public type:int require:1 default:1 other: desc:公共参数(区别设置)
  */
-class demo
+class Demo extends Controller
 {
     /**
      * @title 测试demo接口
      * @description 接口说明
      * @author 开发者
-     * @url /api/demo
+     * @url /index/demo
+     * @method GET
+     *
+     * @header name:device require:1 default: desc:设备号
      *
      * @param name:id type:int require:1 default:1 other: desc:唯一ID
      *
@@ -47,6 +55,8 @@ class demo
     public function index()
     {
         //接口代码
+        $device = $this->request->header('device');
+        echo json_encode(["code"=>200, "message"=>"success", "data"=>['device'=>$device]]);
     }
 
 }
@@ -60,6 +70,11 @@ class demo
 
 ###更多支持
 - QQ群663447446
+
+###2017年8月16日更新
+- 增加头部参数设置，根据自己需求去设置参数
+- 增加全局参数设置及类参数设置，全局参数设置可以doc.php public_param、public_header配置，类局部公用参数可在class下面进行设置，详见demo.php
+- 增加模拟请求方式get、post、put、delete，注释课设置method参数进行标识
 
 ###问题
 不少小伙伴反应，没有正常安装doc.php 配置文件，原因是你改过应用目录官方默认是application

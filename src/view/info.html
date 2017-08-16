@@ -9,10 +9,10 @@
     <div class="jumbotron">
 
         <h2>接口：{$doc.title|default="请设置title注释"}</h2>
-        <p>接口地址：{$doc.url|default="请设置url注释"}</p>
+        <p>接口地址：{$doc.url|default="请设置url注释"} <span class="label label-success">{$doc.method|default='GET'}</span></p>
         <p class="text-primary">{$doc.title|default="请设置title注释"} -- {$doc.author|default="请设置auhtor注释"}</p>
         <br/>
-        <p><strong>{$doc.description;}</strong></p><br/>
+        <p><strong>{$doc.description|default=""}</strong></p><br/>
 
         <ul id="myTab" class="nav nav-tabs">
             <li class="active"><a href="#info" data-toggle="tab">接口信息</a></li>
@@ -21,26 +21,45 @@
         <div class="tab-content">
             <!--info-->
             <div class="tab-pane fade in active" id="info">
+                {if condition="isset($doc.header)"}
+                <h3>请求Headers</h3>
+                <table class="table table-striped" >
+                    <tr><th>名称</th><th>是否必须</th><th>默认值</th><th>说明</th></tr>
+                    {volist name="doc.header" id="head"}
+                    <tr>
+                        <td>{$head.name|default="-"}</td>
+                        <td>{if condition="$head.require eq 1"}必填{else/}非必填{/if}</td>
+                        <td>{$head.default|default="-"}</td>
+                        <td>{$head.desc|default="-"}</td>
+                    </tr>
+                    {/volist}
+                </table>
+                <br>
+                {/if}
+                {if condition="isset($doc.param)"}
                 <h3>接口参数</h3>
                 <table class="table table-striped" >
                     <tr><th>参数名字</th><th>类型</th><th>是否必须</th><th>默认值</th><th>其他</th><th>说明</th></tr>
                     {volist name="doc.param" id="param"}
                     <tr>
-                        <td>{$param.name|default=""}</td>
-                        <td>{$param.type|default=""}</td>
+                        <td>{$param.name|default="-"}</td>
+                        <td>{$param.type|default="-"}</td>
                         <td>{if condition="$param.require eq 1"}必填{else/}非必填{/if}</td>
-                        <td>{$param.default|default=""}</td>
-                        <td>{$param.other|default=""}</td>
-                        <td>{$param.desc|default=""}</td>
+                        <td>{$param.default|default="-"}</td>
+                        <td>{$param.other|default="-"}</td>
+                        <td>{$param.desc|default="-"}</td>
                     </tr>
                     {/volist}
                 </table>
                 <br>
+                {/if}
+                {if condition="isset($doc.remark)"}
                 <h3>备注说明</h3>
                 <div role="alert" class="alert alert-info">
                     {$doc.remark|default="无"}
                 </div>
                 <br>
+                {/if}
                 <h3>返回结果</h3>
                 <p><code id="json_text">{$return}</code></p>
             </div>
@@ -62,12 +81,25 @@
                                 </div>
                                 <div class="col-sm-4"><button type="button" id="send" class="btn btn-success" data-loading-text="Loading..." autocomplete="off">发送测试</button></div>
                             </div>
+                            {if condition="isset($doc.header)"}
+                                {volist name="doc.header" id="head"}
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label"><span class="badge">header</span> {$head.name|default=""}</label>
+                                    <div class="col-sm-6">
+                                        <input class="form-control" type="text" name="header[{$head.name}]" value="">
+                                    </div>
+                                    <div class="col-sm-4"><label class="control-label text-warning"></label></div>
+                                </div>
+                                {/volist}
+                            {/if}
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">提交方式</label>
                                 <div class="col-sm-6">
                                     <select class="form-control" name="method_type">
-                                        <option value="get">GET</option>
-                                        <option value="post">POST</option>
+                                        <option value="GET" {if condition="isset($doc['method']) && strtoupper($doc['method']) == 'GET'"}selected{/if}>GET</option>
+                                        <option value="POST" {if condition="isset($doc['method']) && strtoupper($doc['method']) == 'POST'"}selected{/if}>POST</option>
+                                        <option value="PUT" {if condition="isset($doc['method']) && strtoupper($doc['method']) == 'PUT'"}selected{/if}>PUT</option>
+                                        <option value="DELETE" {if condition="isset($doc['method']) && strtoupper($doc['method']) == 'DELETE'"}selected{/if}>DELETE</option>
                                     </select>
                                 </div>
                                 <div class="col-sm-4"></div>
@@ -86,6 +118,7 @@
                                         <span class="glyphicon glyphicon-plus"></span> 增加参数</button>
                                 </div>
                             </div>
+                            {if condition="isset($doc.param)"}
                             {volist name="doc.param" id="param"}
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">{$param.name|default=""}</label>
@@ -95,6 +128,7 @@
                                 <div class="col-sm-4"><label class="control-label text-warning"></label></div>
                             </div>
                             {/volist}
+                            {/if}
                         </form>
                     </div>
                 </div>
@@ -224,7 +258,6 @@
                 dataType:'json',
                 success: function (data) {
                     window.json = data.result;
-                    console.log(window.json);
                     Process();
                     $btn.button('reset');
                 },

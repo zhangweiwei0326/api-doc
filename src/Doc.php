@@ -113,10 +113,17 @@ class Doc
         $action_doc = [];
         if($class && class_exists($class)){
             $reflection = new \ReflectionClass($class);
+            $doc_str = $reflection->getDocComment();
+            $doc = new DocParser();
+            $class_doc = $doc->parse($doc_str);
+            $class_doc['header'] = isset($class_doc['header'])? $class_doc['header'] : [];
+            $class_doc['param'] = isset($class_doc['param']) ? $class_doc['param'] : [];
             if($reflection->hasMethod($action)) {
                 $method = $reflection->getMethod($action);
                 $doc = new DocParser();
                 $action_doc = $doc->parse($method->getDocComment());
+                $action_doc['header'] = isset($action_doc['header']) ? array_merge($class_doc['header'], $action_doc['header']) : [];
+                $action_doc['param'] = isset($action_doc['param']) ? array_merge($class_doc['param'], $action_doc['param']) : [];
             }
         }
         return $action_doc;

@@ -23,7 +23,7 @@ function Process(){
     $("#json_text").html("<PRE class='CodeContainer'>"+html+"</PRE>"); // hongtao
   }catch(e){
     alert("JSON数据格式不正确:\n"+e.message);
-    $id("Canvas").innerHTML = "";
+    $id("Canvas").innerHTML = json;
   }
 }
 window._dateObj = new Date();
