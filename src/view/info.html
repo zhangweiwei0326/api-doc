@@ -21,7 +21,7 @@
         <div class="tab-content">
             <!--info-->
             <div class="tab-pane fade in active" id="info">
-                {if condition="isset($doc.header)"}
+                {if condition="isset($doc.header) &&  !empty($doc.header)"}
                 <h3>请求Headers</h3>
                 <table class="table table-striped" >
                     <tr><th>名称</th><th>是否必须</th><th>默认值</th><th>说明</th></tr>
@@ -81,7 +81,7 @@
                                 </div>
                                 <div class="col-sm-4"><button type="button" id="send" class="btn btn-success" data-loading-text="Loading..." autocomplete="off">发送测试</button></div>
                             </div>
-                            {if condition="isset($doc.header)"}
+                            {if condition="isset($doc.header) && !empty($doc.header)"}
                                 {volist name="doc.header" id="head"}
                                 <div class="form-group">
                                     <label class="col-sm-2 control-label"><span class="badge">header</span> {$head.name|default=""}</label>
