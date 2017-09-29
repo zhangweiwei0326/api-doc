@@ -36,15 +36,15 @@ function http_request($url, $cookie, $data = array(), $method = array(), $header
         case 'GET':
             break;
         case 'POST':
-            curl_setopt($handle, CURLOPT_POST, true);
-            curl_setopt($handle, CURLOPT_POSTFIELDS, $data);
+            curl_setopt($curl, CURLOPT_POST, true);
+            curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
             break;
         case 'PUT':
-            curl_setopt($handle, CURLOPT_CUSTOMREQUEST, 'PUT');
-            curl_setopt($handle, CURLOPT_POSTFIELDS, $data);
+            curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'PUT');
+            curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
             break;
         case 'DELETE':
-            curl_setopt($handle, CURLOPT_CUSTOMREQUEST, 'DELETE');
+            curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'DELETE');
             break;
     }
     if (!empty($cookie)){
