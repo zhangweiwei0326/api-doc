@@ -46,6 +46,8 @@ class DocController
 
     public function __construct(Request $request = null)
     {
+        //有些程序配置了默认json问题
+        config('default_return_type', 'html');
         if (is_null($request)) {
             $request = Request::instance();
         }
