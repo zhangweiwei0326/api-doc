@@ -122,8 +122,8 @@ class Doc
                 $method = $reflection->getMethod($action);
                 $doc = new DocParser();
                 $action_doc = $doc->parse($method->getDocComment());
-                $action_doc['header'] = isset($action_doc['header']) ? array_merge($class_doc['header'], $action_doc['header']) : [];
-                $action_doc['param'] = isset($action_doc['param']) ? array_merge($class_doc['param'], $action_doc['param']) : [];
+                $action_doc['header'] = isset($action_doc['header']) ? array_merge($class_doc['header'], $action_doc['header']) : $class_doc['header'];
+                $action_doc['param'] = isset($action_doc['param']) ? array_merge($class_doc['param'], $action_doc['param']) : $class_doc['param'];
             }
         }
         return $action_doc;
