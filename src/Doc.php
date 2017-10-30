@@ -73,16 +73,16 @@ class Doc
         {
             if(class_exists($class))
             {
-                $moudel= [];
+                $module = [];
                 $reflection = new \ReflectionClass($class);
                 $doc_str = $reflection->getDocComment();
                 $doc = new DocParser();
                 $class_doc = $doc->parse($doc_str);
-                $moudel =  $class_doc;
-                $moudel['class'] = $class;
+                $module =  $class_doc;
+                $module['class'] = $class;
                 $method = $reflection->getMethods(\ReflectionMethod::IS_PUBLIC);
                 $filter_method = array_merge(['__construct'], $this->config['filter_method']);
-                $moudel['actions'] = [];
+                $module['actions'] = [];
                 foreach ($method as $action){
                     if(!in_array($action->name, $filter_method))
                     {
@@ -92,11 +92,31 @@ class Doc
                         {
                             $action_doc = $doc->parse($doc_str);
                             $action_doc['name'] = $class."::".$action->name;
-                            array_push($moudel['actions'], $action_doc);
+                            if(array_key_exists('title', $action_doc)){
+                                if(array_key_exists('module', $action_doc)){
+                                    $key = array_search($action_doc['module'], array_column($list, 'title'));
+                                    if($key === false){
+                                        $folder = [
+                                            'title' => $action_doc['module'],
+                                            'description' => '',
+                                            'class' => $module['class'],
+                                            'actions' => [],
+                                        ];
+                                        array_push($folder['actions'], $action_doc);
+                                        array_push($list, $folder);
+                                    }else{
+                                        array_push($list[$key]['actions'], $action_doc);
+                                    }
+                                }else{
+                                    array_push($module['actions'], $action_doc);
+                                }
+                            }
                         }
                     }
                 }
-                array_push($list, $moudel);
+                if(!empty($module['actions'])){
+                    array_push($list, $module);
+                }
             }
         }
         return $list;

@@ -39,4 +39,25 @@ class Demo extends Controller
         echo json_encode(["code"=>200, "message"=>"success", "data"=>['device'=>$device]]);
     }
 
+    /**
+     * @title 登录接口
+     * @description 接口说明
+     * @author 开发者
+     * @url /api/demo
+     * @method GET
+     * @module 用户模块
+
+     * @param name:name type:int require:1 default:1 other: desc:用户名
+     * @param name:pass type:int require:1 default:1 other: desc:密码
+     *
+     * @return name:名称
+     * @return mobile:手机号
+     *
+     */
+    public function login(Request $request)
+    {
+        //接口代码
+        $device = $request->header('device');
+        echo json_encode(["code"=>200, "message"=>"success", "data"=>['device'=>$device]]);
+    }
 }
