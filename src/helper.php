@@ -55,3 +55,14 @@ function http_request($url, $cookie, $data = array(), $method = array(), $header
     curl_close($curl);
     return $output;
 }
+
+/**
+ * array_column
+ */
+if(!function_exists("array_column"))
+{
+    function array_column($array,$column_name)
+    {
+        return array_map(function($element) use($column_name){return $element[$column_name];}, $array);
+    }
+}
