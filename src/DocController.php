@@ -112,24 +112,36 @@ class DocController
     }
 
     /**
+     * 设置目录树及图标
+     * @param $actions
+     * @return mixed
+     */
+    protected function setIcon($actions, $num = 1)
+    {
+        foreach ($actions as $key=>$moudel){
+            if(isset($moudel['actions'])){
+                $actions[$key]['iconClose'] = $this->root."/doc/assets/js/zTree_v3/img/zt-folder.png";
+                $actions[$key]['iconOpen'] = $this->root."/doc/assets/js/zTree_v3/img/zt-folder-o.png";
+                $actions[$key]['open'] = true;
+                $actions[$key]['isParent'] = true;
+                $actions[$key]['actions'] = $this->setIcon($moudel['actions'], $num = 1);
+            }else{
+                $actions[$key]['icon'] = $this->root."/doc/assets/js/zTree_v3/img/zt-file.png";
+                $actions[$key]['isParent'] = false;
+                $actions[$key]['isText'] = true;
+            }
+        }
+        return $actions;
+    }
+
+    /**
      * 接口列表
      * @return \think\Response
      */
     public function getList()
     {
         $list = $this->doc->getList();
-        foreach ($list as $key=>$moudel){
-            $list[$key]['iconClose'] = $this->root."/doc/assets/js/zTree_v3/img/zt-folder.png";
-            $list[$key]['iconOpen'] = $this->root."/doc/assets/js/zTree_v3/img/zt-folder-o.png";
-            $list[$key]['open'] = true;
-            $list[$key]['isParent'] = true;
-            foreach ($moudel['actions'] as $k=>$v) {
-                $moudel['actions'][$k]['icon'] = $this->root."/doc/assets/js/zTree_v3/img/zt-file.png";
-                $moudel['actions'][$k]['isParent'] = false;
-                $moudel['actions'][$k]['isText'] = true;
-            }
-            $list[$key]['actions'] = $moudel['actions'];
-        }
+        $list = $this->setIcon($list);
         return response(['firstId'=>'', 'list'=>$list], 200, [], 'json');
     }
 

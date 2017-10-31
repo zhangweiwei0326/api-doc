@@ -94,18 +94,16 @@ class Doc
                             $action_doc['name'] = $class."::".$action->name;
                             if(array_key_exists('title', $action_doc)){
                                 if(array_key_exists('module', $action_doc)){
-                                    $key = array_search($action_doc['module'], array_column($list, 'title'));
+                                    $key = array_search($action_doc['module'], array_column($module['actions'], 'title'));
                                     if($key === false){
-                                        $folder = [
-                                            'title' => $action_doc['module'],
-                                            'description' => '',
-                                            'class' => $module['class'],
-                                            'actions' => [],
-                                        ];
-                                        array_push($folder['actions'], $action_doc);
-                                        array_push($list, $folder);
+                                        $action = $module;
+                                        $action['title'] = $action_doc['module'];
+                                        $action['module'] = $action_doc['module'];
+                                        $action['actions'] = [];
+                                        array_push($action['actions'], $action_doc);
+                                        array_push($module['actions'], $action);
                                     }else{
-                                        array_push($list[$key]['actions'], $action_doc);
+                                        array_push($module['actions'][$key]['actions'], $action_doc);
                                     }
                                 }else{
                                     array_push($module['actions'], $action_doc);
@@ -114,7 +112,22 @@ class Doc
                         }
                     }
                 }
-                if(!empty($module['actions'])){
+                if(array_key_exists('group', $module)){
+                    $key = array_search($module['group'], array_column($list, 'title'));
+                    if($key === false){ //创建分组
+                        $floder = [
+                            'title' => $module['group'],
+                            'description' => '',
+                            'package' => '',
+                            'class' => '',
+                            'actions' => []
+                        ];
+                        array_push($floder['actions'], $module);
+                        array_push($list, $floder);
+                    }else{
+                        array_push($list[$key]['actions'], $module);
+                    }
+                }else{
                     array_push($list, $module);
                 }
             }

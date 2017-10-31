@@ -15,7 +15,7 @@ composer require weiwei/api-doc
         'app\\api\\controller\\Demo'
     ]
 ```
-####3、在相关接口类中增加注释参数
+####3、在相关接口类中增加注释参数( group 参数将接口分组，可选)
 方法如下：返回参数支持数组及多维数组
 ```
 <?php
@@ -25,6 +25,7 @@ use think\Controller;
 /**
  * @title 测试demo
  * @description 接口说明
+ * @group 接口分组
  * @header name:key require:1 default: desc:秘钥(区别设置)
  * @param name:public type:int require:1 default:1 other: desc:公共参数(区别设置)
  */
