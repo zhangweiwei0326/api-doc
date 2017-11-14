@@ -56,7 +56,7 @@ class DocController
             'view_path' => $this->view_path
         ];
         $this->view =  new View($config);
-        $this->doc = new Doc((array)Config::get('doc'));
+        $this->doc = new Doc((array)Config::get('doc'));//读取配置文件
 
         $this->view->assign('title',$this->doc->__get("title"));
         $this->view->assign('version',$this->doc->__get("version"));

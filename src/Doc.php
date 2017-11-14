@@ -2,6 +2,8 @@
 
 namespace Api\Doc;
 
+use function foo\func;
+
 class Doc
 {
     protected $config = [
@@ -121,6 +123,7 @@ class Doc
                 $action_doc = $doc->parse($method->getDocComment());
                 $action_doc['header'] = isset($action_doc['header']) ? array_merge($class_doc['header'], $action_doc['header']) : [];
                 $action_doc['param'] = isset($action_doc['param']) ? array_merge($class_doc['param'], $action_doc['param']) : [];
+                $action_doc['long_description'] = $action_doc['long_description'] ?? [];
             }
         }
         return $action_doc;
@@ -131,14 +134,21 @@ class Doc
      * @param array $doc
      * @return string
      */
+
     public function formatReturn($doc = [])
+    {
+        $text = $doc['long_description'];
+        return $text;
+    }
+
+
+    public function formatReturnOld($doc = [])
     {
         $json = '{<br>';
         $data = $this->config['return_format'];
         foreach ($data as $name => $value) {
             $json .= '&nbsp;&nbsp;"' . $name . '":' . $value . ',<br>';
         }
-
         $returns = isset($doc['return']) ? $doc['return'] : [];
         if (count($returns) == 1 && strpos($returns[0], ':') == false) {
             $json .= '&nbsp;&nbsp;"data":' . $returns[0];
@@ -148,7 +158,6 @@ class Doc
 
         }
         $json .= '&nbsp;&nbsp;"data":{<br/>';
-
 
         foreach ($returns as $val) {
             list($name, $value) = explode(":", trim($val));
