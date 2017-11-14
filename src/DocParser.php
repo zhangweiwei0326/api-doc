@@ -21,15 +21,16 @@ class DocParser
         // Get all the lines and strip the * from the first character
         if (preg_match_all ( '#^\s*\*(.*)#m', $comment, $lines ) === false)
             return $this->params;
+
         $this->parseLines ( $lines [1] );
         return $this->params;
     }
     
     private function parseLines($lines) {
         $desc = [];
+
         foreach ( $lines as $line ) {
             $parsedLine = $this->parseLine ( $line ); // Parse the line
-
             if ($parsedLine === false && ! isset ( $this->params ['description'] )) {
                 if (isset ( $desc )) {
                     // Store the first line in the short description
@@ -105,8 +106,9 @@ class DocParser
     }
     
     private function formatParam($string) {
+
         $string = $string." ";
-        if(preg_match_all('/(\w+):(.*?)[\s\n]/s', $string, $meatchs)){
+        if(preg_match_all('/(\w+)[\s]?:(.*?)[\s\n]/s', $string, $meatchs)){
             $param = [];
             foreach ($meatchs[1] as $key=>$value){
                 $param[$meatchs[1][$key]] = $this->getParamType($meatchs[2][$key]);
