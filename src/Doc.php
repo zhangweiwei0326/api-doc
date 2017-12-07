@@ -136,6 +136,42 @@ class Doc
     }
 
     /**
+     * 文档目录列表
+     * @return array
+     */
+    public function getModuleList()
+    {
+        $controller = $this->config['controller'];
+        $list = [];
+        foreach ($controller as $class) {
+            if (class_exists($class)) {
+                $reflection = new \ReflectionClass($class);
+                $doc_str = $reflection->getDocComment();
+                $doc = new DocParser();
+                $class_doc = $doc->parse($doc_str);
+                if(array_key_exists('group', $class_doc)){
+                    $key = array_search($class_doc['group'], array_column($list, 'title'));
+                    if($key === false){ //创建分组
+                        $floder = [
+                            'title' => $class_doc['group'],
+                            'children' => []
+                        ];
+                        array_push($floder['children'], $class_doc);
+                        array_push($list, $floder);
+                    }
+                    else
+                    {
+                        array_push($list[$key]['children'], $class_doc);
+                    }
+                }else{
+                    array_push($list, $class_doc);
+                }
+            }
+        }
+        return $list;
+    }
+
+    /**
      * 获取类中指导方法注释详情
      * @param $class
      * @param $action
@@ -155,11 +191,52 @@ class Doc
                 $method = $reflection->getMethod($action);
                 $doc = new DocParser();
                 $action_doc = $doc->parse($method->getDocComment());
+                $action_doc['name'] = $class."::".$method->name;
                 $action_doc['header'] = isset($action_doc['header']) ? array_merge($class_doc['header'], $action_doc['header']) : $class_doc['header'];
                 $action_doc['param'] = isset($action_doc['param']) ? array_merge($class_doc['param'], $action_doc['param']) : $class_doc['param'];
             }
         }
         return $action_doc;
+    }
+
+    /**
+     * 文档列表搜素
+     * @param string $keyword
+     * @return array
+     */
+    public function searchList($keyword = "")
+    {
+        $controller = $this->config['controller'];
+        $list = [];
+        foreach ($controller as $class)
+        {
+            if(class_exists($class))
+            {
+                $reflection = new \ReflectionClass($class);
+                $method = $reflection->getMethods(\ReflectionMethod::IS_PUBLIC);
+                $filter_method = array_merge(['__construct'], $this->config['filter_method']);
+                foreach ($method as $action){
+                    if(!in_array($action->name, $filter_method))
+                    {
+                        $doc = new DocParser();
+                        $doc_str = $action->getDocComment();
+                        if($doc_str)
+                        {
+                            $action_doc = $doc->parse($doc_str);
+                            $action_doc['name'] = $class."::".$action->name;
+                            if((isset($action_doc['title']) && strpos($action_doc['title'], $keyword) !== false)
+                                    || (isset($action_doc['description']) && strpos($action_doc['description'], $keyword) !== false)
+                                    || (isset($action_doc['author']) && strpos($action_doc['author'], $keyword) !== false)
+                                    || (isset($action_doc['url'])  && strpos($action_doc['url'], $keyword) !== false))
+                            {
+                                array_push($list, $action_doc);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return $list;
     }
 
     /**

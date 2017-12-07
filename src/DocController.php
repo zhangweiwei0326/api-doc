@@ -63,7 +63,7 @@ class DocController
         $this->view->assign('title',$this->doc->__get("title"));
         $this->view->assign('version',$this->doc->__get("version"));
         $this->view->assign('copyright',$this->doc->__get("copyright"));
-        $this->root = $this->request->root();
+        $this->root = $this->request->domain();
     }
 
     /**
@@ -108,7 +108,25 @@ class DocController
      */
     public function index()
     {
-        return $this->show('index');
+        return $this->show('index', ['doc' => $this->request->input('name')]);
+    }
+
+    /**
+     * 文档搜素
+     * @return mixed|\think\Response
+     */
+    public function search()
+    {
+        if($this->request->isAjax())
+        {
+            $data = $this->doc->searchList($this->request->param('query'));
+            return response($data, 200, [], 'json');
+        }
+        else
+        {
+            $module = $this->doc->getModuleList();
+            return $this->show('search', ['module' => $module]);
+        }
     }
 
     /**
