@@ -1,8 +1,8 @@
 {extend name="base" /}
 
 {block name="head"}
-<link href='__ASSETS__/css/json.css' rel='stylesheet' type='text/css'>
-<script src="__ASSETS__/js/json.js" type="text/javascript"></script>
+<link href='{$static}/css/json.css' rel='stylesheet' type='text/css'>
+<script src="{$static}/js/json.js" type="text/javascript"></script>
 {/block}
 {block name="main"}
 <div class="container">
@@ -277,8 +277,8 @@
         $('#addJosnTextmModal').on('hide.bs.modal', function () {
             //关闭
         })
-        window.ImgCollapsed = "__ASSETS__/img/Collapsed.gif";
-        window.ImgExpanded = "__ASSETS__/img/Expanded.gif";
+        window.ImgCollapsed = "{$static}/img/Collapsed.gif";
+        window.ImgExpanded = "{$static}/img/Expanded.gif";
     });
 
     function init(){

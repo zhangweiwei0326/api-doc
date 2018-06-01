@@ -7,6 +7,8 @@ class Doc
         'title'=>'APi接口文档',
         'version'=>'1.0.0',
         'copyright'=>'Powered By Zhangweiwei',
+        'password' => '',
+        'static_path' => '',
         'controller' => [],
         'filter_method'=>['_empty'],
         'return_format' => [

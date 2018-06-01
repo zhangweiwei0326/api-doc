@@ -5,14 +5,14 @@
 ```
 composer require weiwei/api-doc
 ```
->由于我没发布版本，所有暂时需带dev-master安装
 
 ####2、配置参数
-安装好扩展后在 application\extra\ 文件夹下会生成 doc.php 配置文件
+5.0安装好扩展后在 application\extra\ 文件夹下会生成 doc.php 配置文件
+5.1安装好扩展后在 application\config\ 文件夹下会生成 doc.php 配置文件
 在controller参数中添加对应的类
 ```
     'controller' => [
-        'app\\api\\controller\\Demo'
+        'app\\api\\controller\\Demo' //这个是控制器的命名空间+控制器名称
     ]
 ```
 ####3、在相关接口类中增加注释参数( group 参数将接口分组，可选)
@@ -83,7 +83,7 @@ class Demo extends Controller
     }
 }
 ```
-####4、在浏览器访问http://你的域名/doc 查看接口文档
+####4、在浏览器访问http://你的域名/doc 或者 http://你的域名/index.php/doc 查看接口文档
 
 ####5、预览
 ![](https://static.oschina.net/uploads/img/201704/17101409_tAgD.png)
@@ -93,6 +93,10 @@ class Demo extends Controller
 ###更多支持
 - QQ群663447446
 
+###赞助二维码
+![](https://static.oschina.net/uploads/space/2018/0601/162032_g5VI_270003.jpg)
+![](https://static.oschina.net/uploads/space/2018/0601/162051_JzE9_270003.jpg)
+
 ###2017年8月16日更新
 - 增加头部参数设置，根据自己需求去设置参数
 - 增加全局参数设置及类参数设置，全局参数设置可以doc.php public_param、public_header配置，类局部公用参数可在class下面进行设置，详见demo.php
@@ -101,3 +105,10 @@ class Demo extends Controller
 ###问题
 不少小伙伴反应，没有正常安装doc.php 配置文件，原因是你改过应用目录官方默认是application
 如果没有生成doc.php 配置文件 你可以手动安装，直接在application（你修改的目录）里面创建extra文件夹，然后把扩展包中的vendor\weiwei\api-doc\src\config.php文件复制进去，并重命名为doc.php
+
+###2018年6月1日更新
+- 增加TP5.1支持
+- 增加简单的访问验证（默认不开启密码，要开启只需在doc.php配置password值）
+- 增加静态资源自定义路径方式（可以把扩展下面的assets目录复制到你的pulic目录，然后配置static_path='/assets'）,特么是nginx线上服务器可以这么做
+- 增加文档搜索功能
+

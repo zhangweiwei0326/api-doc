@@ -1,10 +1,24 @@
 <?php
-\think\Route::get('doc/assets', "\\Api\\Doc\\DocController@assets",['deny_ext'=>'php|.htacess']);
-\think\Route::get('doc', "\\Api\\Doc\\DocController@index");
-\think\Route::get('doc/search', "\\Api\\Doc\\DocController@search");
-\think\Route::get('doc/list', "\\Api\\Doc\\DocController@getList");
-\think\Route::get('doc/info', "\\Api\\Doc\\DocController@getInfo");
-\think\Route::any('doc/debug', "\\Api\\Doc\\DocController@debug");
+if(defined('THINK_VERSION')){
+    \think\Route::get('doc/assets', "\\Api\\Doc\\DocController@assets",['deny_ext'=>'php|.htacess']);
+    \think\Route::get('doc/search', "\\Api\\Doc\\DocController@search");
+    \think\Route::get('doc/list', "\\Api\\Doc\\DocController@getList");
+    \think\Route::get('doc/info', "\\Api\\Doc\\DocController@getInfo");
+    \think\Route::any('doc/debug', "\\Api\\Doc\\DocController@debug");
+    \think\Route::any('doc/pass', "\\Api\\Doc\\DocController@pass");
+    \think\Route::any('doc/login', "\\Api\\Doc\\DocController@login");
+    \think\Route::get('doc', "\\Api\\Doc\\DocController@index");
+}else{
+    Route::get('doc/assets', "\\Api\\Doc\\DocController@assets",['deny_ext'=>'php|.htacess']);
+    Route::get('doc/search', "\\Api\\Doc\\DocController@search");
+    Route::get('doc/list', "\\Api\\Doc\\DocController@getList");
+    Route::get('doc/info', "\\Api\\Doc\\DocController@getInfo");
+    Route::any('doc/debug', "\\Api\\Doc\\DocController@debug");
+    Route::any('doc/pass', "\\Api\\Doc\\DocController@pass");
+    Route::any('doc/login', "\\Api\\Doc\\DocController@login");
+    Route::any('doc', "\\Api\\Doc\\DocController@index");
+}
+
 
 /**
  * curl模拟请求方法

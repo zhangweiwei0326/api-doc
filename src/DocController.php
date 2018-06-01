@@ -1,8 +1,6 @@
 <?php
 namespace Api\Doc;
 
-use think\Config;
-use think\Paginator;
 use think\View;
 use think\Request;
 
@@ -46,6 +44,10 @@ class DocController
 
     public function __construct(Request $request = null)
     {
+        //5.1 去除常量调整导致的问题
+        if(!defined('THINK_VERSION')){
+            if(!defined('DS'))  define('DS', DIRECTORY_SEPARATOR);
+        }
         //有些程序配置了默认json问题
         config('default_return_type', 'html');
         if (is_null($request)) {
@@ -54,31 +56,58 @@ class DocController
         $this->request = $request;
         $this->assets_path = __DIR__.DS.'assets'.DS;
         $this->view_path = __DIR__.DS.'view'.DS;
+        if(!defined('THINK_VERSION')){
+            $this->doc = new Doc((array)\think\facade\Config::pull('doc'));
+        }else{
+            $this->doc = new Doc((array)\think\Config::get('doc'));
+        }
         $config = [
-            'view_path' => $this->view_path
+            'view_path' => $this->view_path,
+            'default_filter' => '',
         ];
         $this->view =  new View($config);
-        $this->doc = new Doc((array)Config::get('doc'));
-
+        if(!$this->view->engine){
+            $this->view->init($config);
+        }
         $this->view->assign('title',$this->doc->__get("title"));
         $this->view->assign('version',$this->doc->__get("version"));
         $this->view->assign('copyright',$this->doc->__get("copyright"));
-        $this->root = $this->request->domain();
+        $this->assets_path = $this->doc->__get("static_path");
+        $this->assets_path = $this->assets_path ? $this->assets_path : '/doc/assets';
+        $this->view->assign('static', $this->assets_path);
+        $this->root = $this->request->root();
+    }
+
+    /**
+     * 验证密码
+     * @return bool
+     */
+    protected function checkLogin()
+    {
+        $pass = $this->doc->__get("password");
+        if($pass){
+            if(session('pass') === md5($pass)){
+                return true;
+            }else{
+                return false;
+            }
+        }else{
+            return true;
+        }
     }
 
     /**
      * 显示模板
      * @param $name
-     * @return mixed
+     * @param array $vars
+     * @param array $replace
+     * @param array $config
+     * @return string
      */
-    protected function show($name, $vars = [], $replace = [], $config = [])
+    protected function show($name, $vars = [], $config = [])
     {
-        $re = [
-            "__ASSETS__" => $this->root."/doc/assets"
-        ];
-        $replace = array_merge($re, $replace);
         $vars = array_merge(['root'=>$this->root], $vars);
-        return $this->view->fetch($name, $vars, $replace, $config);
+        return $this->view->fetch($name, $vars, $config);
     }
 
 
@@ -88,12 +117,13 @@ class DocController
      */
     public function assets()
     {
+        $assets_path = __DIR__.DS.'assets'.DS;
         $path = str_replace("doc/assets", "", $this->request->pathinfo());
         $ext = $this->request->ext();
         if($ext)
         {
             $type= "text/html";
-            $content = file_get_contents($this->assets_path.$path);
+            $content = file_get_contents($assets_path.$path);
             if(array_key_exists($ext, $this->mimeType))
             {
                 $type = $this->mimeType[$ext];
@@ -103,12 +133,43 @@ class DocController
     }
 
     /**
+     * 输入密码
+     * @return string
+     */
+    public function pass()
+    {
+        return $this->show('pass');
+    }
+
+    /**
+     * 登录
+     * @return string
+     */
+    public function login()
+    {
+        $pass = $this->doc->__get("password");
+        if($pass && $this->request->param('pass') === $pass){
+            session('pass', md5($pass));
+            $data = ['status' => '200', 'message' => '登录成功'];
+        }else if(!$pass){
+            $data = ['status' => '200', 'message' => '登录成功'];
+        }else{
+            $data = ['status' => '300', 'message' => '密码错误'];
+        }
+        return response($data, 200, [], 'json');
+    }
+
+    /**
      * 文档首页
      * @return mixed
      */
     public function index()
     {
-        return $this->show('index', ['doc' => $this->request->input('name')]);
+        if($this->checkLogin()){
+            return $this->show('index', ['doc' => $this->request->param('doc')]);
+        }else{
+            return redirect('doc/pass');
+        }
     }
 
     /**
@@ -138,13 +199,13 @@ class DocController
     {
         foreach ($actions as $key=>$moudel){
             if(isset($moudel['actions'])){
-                $actions[$key]['iconClose'] = $this->root."/doc/assets/js/zTree_v3/img/zt-folder.png";
-                $actions[$key]['iconOpen'] = $this->root."/doc/assets/js/zTree_v3/img/zt-folder-o.png";
+                $actions[$key]['iconClose'] = $this->assets_path."/js/zTree_v3/img/zt-folder.png";
+                $actions[$key]['iconOpen'] = $this->assets_path."/js/zTree_v3/img/zt-folder-o.png";
                 $actions[$key]['open'] = true;
                 $actions[$key]['isParent'] = true;
                 $actions[$key]['actions'] = $this->setIcon($moudel['actions'], $num = 1);
             }else{
-                $actions[$key]['icon'] = $this->root."/doc/assets/js/zTree_v3/img/zt-file.png";
+                $actions[$key]['icon'] = $this->assets_path."/js/zTree_v3/img/zt-file.png";
                 $actions[$key]['isParent'] = false;
                 $actions[$key]['isText'] = true;
             }
