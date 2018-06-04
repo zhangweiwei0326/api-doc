@@ -75,7 +75,7 @@ class DocController
         $this->assets_path = $this->doc->__get("static_path");
         $this->assets_path = $this->assets_path ? $this->assets_path : '/doc/assets';
         $this->view->assign('static', $this->assets_path);
-        $this->root = $this->request->root();
+        $this->root = $this->request->root() ? $this->request->root() : $this->request->domain();
     }
 
     /**
