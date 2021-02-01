@@ -56,12 +56,12 @@
                 {if condition="isset($doc.remark)"}
                 <h3>备注说明</h3>
                 <div role="alert" class="alert alert-info">
-                    {$doc.remark|default="无"}
+                    {$doc.remark||raw|default="无"}
                 </div>
                 <br>
                 {/if}
                 <h3>返回结果</h3>
-                <p><code id="json_text">{$return}</code></p>
+                <p><code id="json_text">{$return|raw}</code></p>
             </div>
             <!--info-->
             <!--test-->

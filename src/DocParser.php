@@ -1,5 +1,5 @@
 <?php
-namespace Api\Doc;
+namespace Weiwei\ApiDoc;
 
 class DocParser
 {

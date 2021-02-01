@@ -1,5 +1,5 @@
 <?php
-namespace Api\Doc;
+namespace Weiwei\ApiDoc;
 
 class Doc
 {
@@ -7,8 +7,6 @@ class Doc
         'title'=>'APi接口文档',
         'version'=>'1.0.0',
         'copyright'=>'Powered By Zhangweiwei',
-        'password' => '',
-        'static_path' => '',
         'controller' => [],
         'filter_method'=>['_empty'],
         'return_format' => [
@@ -22,7 +20,7 @@ class Doc
      * @access public
      * @param  array $config 配置参数
      */
-    public function __construct($config = [])
+    public function __construct($config)
     {
         $this->config = array_merge($this->config, $config);
     }
@@ -250,21 +248,25 @@ class Doc
     {
         $json = '{<br>';
         $data = $this->config['return_format'];
-        foreach ($data as $name=>$value) {
-            $json .= '&nbsp;&nbsp;"'.$name.'":'.$value.',<br>';
-        }
-        $json .= '&nbsp;&nbsp;"data":{<br/>';
         $returns = isset($doc['return']) ? $doc['return'] : [];
-        foreach ($returns as $val)
-        {
-            list($name, $value) =  explode(":", trim($val));
-            if(strpos($value, '@') != false){
-                $json .= $this->string2jsonArray($doc, $val, '&nbsp;&nbsp;&nbsp;&nbsp;');
-            }else{
-                $json .= '&nbsp;&nbsp;&nbsp;&nbsp;' . $this->string2json(trim($name), $value);
+        foreach ($data as $name=>$value) {
+            if($name != 'data' || (empty($returns) && $name == 'data')){
+                $json .= '&nbsp;&nbsp;"'.$name.'":'.$value.',<br>';
             }
         }
-        $json .= '&nbsp;&nbsp;}<br/>';
+        if( !empty($returns) ) {
+            $json .= '&nbsp;&nbsp;"data":{<br/>';
+            foreach ($returns as $val)
+            {
+                list($name, $value) =  explode(":", trim($val));
+                if(strpos($value, '@') != false){
+                    $json .= $this->string2jsonArray($doc, $val, '&nbsp;&nbsp;&nbsp;&nbsp;');
+                }else{
+                    $json .= '&nbsp;&nbsp;&nbsp;&nbsp;' . $this->string2json(trim($name), $value);
+                }
+            }
+            $json .= '&nbsp;&nbsp;}<br/>';
+        }
         $json .= '}';
         return $json;
     }

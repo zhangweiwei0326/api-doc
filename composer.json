@@ -1,6 +1,6 @@
 {
     "name": "weiwei/api-doc",
-    "description": "The ThinkPHP5 Api Doc Package",
+    "description": "The ThinkPHP6 Api Doc Package",
     "type": "think-extend",
     "authors": [
         {
@@ -11,19 +11,21 @@
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "Api\\Doc\\": "src"
-        },
-        "files": [
-            "src/helper.php"
-        ]
+            "Weiwei\\ApiDoc\\": "src"
+        }
     },
     "require": {
-        "topthink/think-helper": ">=1.0.4 <=3.0.4",
-        "topthink/think-installer": ">=1.0.10"
+        "topthink/framework": "^6.0.0",
+        "topthink/think-view": "^1.0"
     },
     "extra": {
-        "think-config": {
-            "doc": "src/config.php"
+        "think":{
+            "services":[
+                "Weiwei\\ApiDoc\\Service"
+            ],
+            "config":{
+                "doc": "src/config/config.php"
+            }
         }
     }
 }

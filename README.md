@@ -3,12 +3,16 @@
 ### 使用方法
 ####1、安装扩展
 ```
+- 6.0执行 1.7开始只支持tp6
 composer require weiwei/api-doc
+- 5.0或者5.1
+composer require weiwei/api-doc 1.6.2
 ```
 
 ####2、配置参数
 - 5.0安装好扩展后在 application\extra\ 文件夹下会生成 doc.php 配置文件
 - 5.1安装好扩展后在 application\config\ 文件夹下会生成 doc.php 配置文件
+- 6.0安装好扩展后在 config\ 文件夹下会生成 doc.php 配置文件
 - 在controller参数中添加对应的类
 ```
     'controller' => [

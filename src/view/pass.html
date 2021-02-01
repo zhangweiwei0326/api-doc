@@ -43,9 +43,10 @@
                     url: "{$root}/doc/login",
                     data: {pass: $("#pass").val() },
                     dataType: "json",
+                    type: 'POST',
                     success: function(data){
                         if(data.status == 200){
-                            location.href = "/doc";
+                            location.href = "{$root}/doc/index";
                         }else{
                             alert(data.message);
                         }
