@@ -24,7 +24,7 @@
                 "Weiwei\\ApiDoc\\Service"
             ],
             "config":{
-                "doc": "src/config/config.php"
+                "doc": "src/config/doc.php"
             }
         }
     }
